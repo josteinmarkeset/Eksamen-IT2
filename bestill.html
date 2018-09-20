@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Bestilling</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        table {
+            margin: auto;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 4px;
+        }
+
+        input {
+            font-size: 1em;
+            max-width: 42px;
+            text-align: center;
+        }
+
+        #purchaseBox {
+            display: none;
+        }
+
+        #purchaseBox > button {
+            display: block;
+            margin: 16px auto;
+        }
+
+        #purchaseMessage {
+            display: none;
+            background-color: goldenrod;
+            border-radius: 5px;
+            padding: 16px;
+        }
+    </style>
+</head>
+<body>
+    <table id="table">
+        <tr>
+            <th>Dato</th>
+            <th>Tidspunkt</th>
+            <th>Arrangement</th>
+            <th>Informasjon</th>
+            <th>Bestill</th>
+        </tr>
+        <tr>
+            <td>1. Juni</td>
+            <td>11:00</td>
+            <td>Trondheim kammermusikkfestival</td>
+            <td>Dette er barnas og familiens festivaldag. Én billett gjelder for alt, og du kan velge mellom en rekke ulike forestillinger</td>
+            <td><button>Bestill</button></td>
+        </tr>
+        <tr>
+            <td>4. Juni</td>
+            <td>14:30</td>
+            <td>Spill opp!</td>
+            <td>Mastereksamen NTNU fløyte v/Matthias Lauga</td>
+            <td><button>Bestill</button></td>
+        </tr>
+        <tr>
+            <td>6. Juni</td>
+            <td>13:00</td>
+            <td>Onsdagskonsert</td>
+            <td>Barokke treblåserensembler</td>
+            <td><button>Bestill</button></td>
+        </tr>
+        <tr>
+            <td>9. Juni</td>
+            <td>14:00</td>
+            <td>Juiogat: Joik for folk</td>
+            <td>En vandring i samisk musikkhistorie ved Lena Jansen</td>
+            <td><button>Bestill</button></td>
+        </tr>
+    </table>
+
+    <div id="purchaseBox">
+        <h1>Bestilling</h1>
+        <h3 id="title"></h3>
+        Voksne:
+        <input id="adults" type="number" min="0" max="100" value="0">
+        Barn:
+        <input id="children" type="number" min="0" max="100" value="0">
+        <button id="purchaseButton">Bekreft Bestilling</button>
+    </div>
+
+    <div id="purchaseMessage">
+    </div>
+
+    <script>
+        const table = document.getElementById('table');
+        const purchaseBox = document.getElementById('purchaseBox');
+        const adults = document.getElementById('adults');
+        const children = document.getElementById('children');
+        const title = document.getElementById('title');
+        const purchaseButton = document.getElementById('purchaseButton');
+        const purchaseMessage = document.getElementById('purchaseMessage');
+
+        const ADULT_PRICE = 100;
+        const CHILD_PRICE = 50;
+
+        const buttons = document.getElementsByTagName('button');
+        Array.prototype.forEach.call(buttons, (button, index) => {
+            button.onclick = () => showPurchase(index);
+        });
+
+        function showPurchase(index) {
+            purchaseMessage.style.display = 'none'; // Make sure is hidden
+            purchaseBox.style.display = "block";
+            let title_text;
+
+            switch (index) {
+                case 0:
+                    title_text = 'Trondheim kammermusikkfestival';
+                    title.innerText = title_text;                    
+                    break;
+                case 1:
+                    title_text = 'Spill opp!';
+                    title.innerText = title_text;
+                    break;
+                case 2:
+                    title_text = 'Onsdagskonsert';
+                    title.innerText = title_text;
+                    break;
+                case 3:
+                    title_text = 'Juiogat: Joik for folk';
+                    title.innerText = title_text;
+                    break;
+            
+                default:
+                    break;
+            }
+
+            purchaseButton.onclick = () => purchase(title_text);
+        }
+
+        function purchase(title) {
+            const adults_count = Number(adults.value);
+            const children_count = Number(children.value);
+            const total_count = adults_count + children_count;
+
+            if(total_count < 1) {
+                purchaseMessage.innerText = 'Venligst velg en eller flere personer';
+                purchaseMessage.style.display = 'block'; // Show message
+                return;
+            }
+
+            let discount = 0;
+            if(total_count >= 5)
+                discount = 0.2;
+
+            const priceTotal = ((adults_count * ADULT_PRICE) + (children_count * CHILD_PRICE)) * (1 - discount);
+
+            let message = `Du har bestilt ${total_count} billetter til Onsdagskonsert for `;
+            if(adults_count > 0 && children_count > 0)
+                message += `${adults_count} voksne og ${adults_count} barn. `;
+            else if(adults_count > 0)
+                message += `${adults_count} voksne. `;
+            else
+                message += `${children_count} barn. `;
+            
+            message += `Totalprisen er kr ${priceTotal}`;
+
+            if(discount)
+                message += `, inklusiv grupperabatt på ${discount * 100} prosent`;
+            
+            message += '.';
+
+            purchaseMessage.innerText = message;
+            purchaseMessage.style.display = 'block'; // Show message
+        }
+    </script>
+</body>
+</html>

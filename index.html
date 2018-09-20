@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Velkommen</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        header {
+            margin: 8px;
+        }
+
+        header > button {
+            margin: auto 10%;
+        }
+
+        header > img:hover {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);            
+            transition: box-shadow .1s ease-in-out;
+        }
+
+        p {
+            text-align: left;
+        }
+
+        #slideContainer {
+            padding: 0 8px;
+        }
+
+        #slideContainer > img {
+            max-width: 100%;
+        }
+
+        #popup {
+            position: absolute;
+            left: 0;
+            right: 0;            
+            opacity: 0;
+            transition: opacity .1s ease-out;
+        }
+
+        #popup > div {
+            display: inline-block;
+            background-color: white;
+            max-width: 350px;
+            padding: 16px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); 
+        }
+
+        #buttonsContainer {
+            margin: 8px;
+        }
+
+        .icon {
+            max-width: 68px;
+        }
+
+        .show {
+            opacity: 1 !important;
+            transition: opacity .1s ease-in;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button onclick="window.location = 'bestill.html'">Bestill</button>
+        <img id="aapningstider" src="./img/aapningstider.jpg" class="icon" onmouseover="showPopup(0)" onmouseout="hidePopup()">        
+        <img id="informasjon" src="./img/informasjon.jpg" class="icon" onmouseover="showPopup(1)" onmouseout="hidePopup()">
+        <img id="priser" src="./img/priser.jpg" class="icon" onmouseover="showPopup(2)" onmouseout="hidePopup()">
+        <button onclick="window.location = 'test.html'"> Spill</button>
+    </header>
+    <div id="popup">
+        <div>
+            <h1 id="popupTitle"></h1>
+            <p id="popupInfo1"></p>
+            <p id="popupInfo2"></p>
+            <p id="popupInfo3"></p>
+        </div>        
+    </div>
+    <div id="slideContainer">
+        <img id="slideImage" src="./img/intro1.jpg" alt="">
+    </div>
+    <div id="buttonsContainer">
+        <button onclick="prevImage()"><</button>
+        <button onclick="nextImage()">></button>
+    </div>
+
+    <script>
+        const popup = document.getElementById('popup');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupInfo1 = document.getElementById('popupInfo1');
+        const popupInfo2 = document.getElementById('popupInfo2');
+        const popupInfo3 = document.getElementById('popupInfo3');
+
+        const slideImage = document.getElementById('slideImage');
+
+        const images = ['./img/intro1.jpg', './img/intro2.jpg', './img/intro3.jpg', './img/intro4.jpg'];
+
+        let currentImage = 0;
+
+        function nextImage() {
+            currentImage++;
+            if(currentImage > images.length - 1)
+                currentImage = 0;
+
+            slideImage.src = images[currentImage];
+        }
+
+        function prevImage() {
+            currentImage--;
+            if(currentImage < 0)
+                currentImage = images.length - 1;
+                
+            slideImage.src = images[currentImage];
+        }
+
+        function showPopup(index) {
+            switch (index) {
+                case 0:
+                    popupTitle.innerText = 'Åpningstider';
+                    popupInfo1.innerText = 'Tirsdag – søndag 11.00-16.00';
+                    break;
+                case 1:
+                    popupTitle.innerText = 'Informasjon';
+                    popupInfo1.innerText = 'Lade allé 60, 7041 Trondheim 73 87 02 80 post@ringve.no';                
+                    popupInfo2.innerText = 'Postboks 6289 Torgarden, 7489 Trondheim';
+                    break;
+                case 2:
+                    popupTitle.innerText = 'Priser';
+                    popupInfo1.innerText = 'Voksen: 120 kr';
+                    popupInfo2.innerText = 'Student/honnør: 100 kr';
+                    popupInfo3.innerText = 'Barn (0-15 år): Gratis';
+                    break;
+        
+                default:
+                    break;
+            }
+
+            popup.classList.add('show');
+        }
+
+        function hidePopup() {
+            popup.classList.remove('show');
+            // Clear text
+            popupTitle.innerText = '';
+            popupInfo1.innerText = '';
+            popupInfo2.innerText = '';
+            popupInfo3.innerText = '';
+        }
+    </script>
+</body>
+</html>

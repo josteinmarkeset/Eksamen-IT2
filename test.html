@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Test deg selv</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        button {
+            font-size: large;
+            font-weight: bold;
+            padding: 16px;
+        }
+
+        #instruments {
+            display: none;
+        }
+
+        #instruments > img {
+            margin: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test dine musikkegenskaper</h1>
+    <p id="tries"></p>
+    <button id="play" onclick="playSound()">Spill lyd</button>
+    <div id="instruments">
+        <h3>Hvilket instrument hører du?</h3>
+        <img src="./img/fagott.jpg">
+        <img src="./img/floyte.jpg">
+        <img src="./img/klarinett.jpg">
+        <img src="./img/obo.jpg">
+        <img src="./img/valthorn.jpg">
+    </div>
+
+    <h1 id="info"></h1>
+    <h1 id="result"></h1>
+    <p id="failed"></p>
+
+    <script>
+        const instruments = document.getElementById('instruments');
+        const play = document.getElementById('play');
+        const result = document.getElementById('result');
+        const tries = document.getElementById('tries');
+        const failed = document.getElementById('failed');
+        const infoElement = document.getElementById('info');
+        
+        const correctSound = './audio/riktig.mp3';
+        const wrongSound = './audio/feil.mp3';
+        const origSounds = ['./audio/fagott.mp3', './audio/floyte.mp3', './audio/klarinett.mp3', './audio/obo.mp3', './audio/valthorn.mp3'];       
+        
+        const imageElements = document.getElementsByTagName('img');
+        let images = Array.from(imageElements);
+
+        let highScore = Number.POSITIVE_INFINITY;
+        let tries_count = 0;
+        let correct_count = 0;
+        let correctAnswer;
+        let audio;
+
+        let sounds = origSounds.slice(); // Slice makes sure we copy instead of reference the other array
+
+        function clearStats() {
+            result.innerText = '';
+            infoElement.innerText = '';
+            failed.innerText = '';
+        }
+
+        function playSound() {
+            clearStats(); // Fjern gammel data fra skjermen
+            
+            // Make updated event handlers for remaining instruments
+            images.forEach((image, index) => {
+                image.onclick = () => chooseInstrument(index);
+            });
+
+            // Change button functionality
+            play.innerText = 'Hør på nytt';
+            play.onclick = () => {
+                audio.currentTime = 0;
+                audio.play();
+            }
+
+            // Generate random number to be used as instrument
+            const randomInt = Math.floor(Math.random() * (sounds.length - 1));
+            correctAnswer = randomInt;
+
+            // Play random instrument audio
+            audio = new Audio(sounds[randomInt]);
+            audio.load();
+            audio.play();
+
+            // Show instruments
+            instruments.style.display = 'block';
+        }
+
+        function chooseInstrument(index) {
+            audio.pause(); // Stop audio when an instrument is picked
+            instruments.style.display = 'none'; // Hide instruments
+
+            if(index === correctAnswer) {
+                audio = new Audio(correctSound);
+                audio.load();
+                audio.play();
+
+                result.style.color = 'green';
+                result.innerText = 'Riktig svar!';
+
+                images[index].style.display = 'none'; // Hide for next rounds
+                images.splice(index, 1); // Remove from array
+                sounds.splice(index, 1); // Remove from array
+                correct_count++;
+            }
+            else {
+                audio = new Audio(wrongSound);
+                audio.load();
+                audio.play();
+
+                result.style.color = 'red';
+                result.innerText = 'Feil svar :(';
+            }
+
+            // Display information on screen
+            play.style.display = 'inline-block';
+            tries_count++;
+            tries.innerText = `Antall forsøk: ${tries_count}`
+
+            // Change button functionality back
+            play.innerText = 'Spill neste lyd';
+            play.onclick = () => playSound();
+
+            // If game is finished
+            if(correct_count > origSounds.length - 1) {
+                const fails = tries_count - correct_count;
+
+                // Show information on screen
+                failed.innerText = `Antall feil: ${fails}`;
+                play.innerText = 'Spill på nytt';
+
+                if(fails === 0)
+                    infoElement.innerText = 'Alt riktig, gratulerer!';
+                else if(fails <= highScore) {
+                    highScore = fails; // Set new highscore
+                    infoElement.innerText = 'High Score!';
+                }
+
+                play.innerText = 'Start på nytt';
+                play.onclick = () => restart();
+            }
+            
+        }
+
+        function restart() {
+            // Reset stats
+            correct_count = 0;
+            tries_count = 0;
+            tries.innerText = '';
+
+            // Reset sound array
+            sounds = origSounds.slice(); // Slice makes sure we copy instead of reference the other array
+            
+            // Reset images
+            images = Array.from(imageElements);
+            Array.prototype.forEach.call(images, (image, index) => {
+                image.style.display = 'inline-block';
+            });
+
+            // Start new game
+            playSound();
+        }
+    </script>
+</body>
+</html>
